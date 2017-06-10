@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.within;
@@ -40,7 +41,41 @@ public class BeeSwarmUnitTest {
       List<Double> trend = swarm.getCostTrend();
       logger.info("trend: {}", trend);
 
-      assertThat(bestSolution.getCost()).isCloseTo(0, within(0.001));
+      assertThat(bestSolution.getCost()).isCloseTo(0, within(0.01));
+
+   }
+
+   @Test
+   public void test_Rosenbrock2() {
+      CostFunction Rosenbrock = new CostFunction() {
+         public double calc(double x, double y)
+         {
+            double expr1 = (x*x - y);
+            double expr2 = 1 - x;
+            return 100 * expr1*expr1 + expr2*expr2;
+         }
+         @Override public double evaluate(List<Double> solution, List<Double> lowerBounds, List<Double> upperBounds) {
+            return calc(solution.get(0), solution.get(1));
+         }
+      };
+
+      BeeMediator mediator = new BeeMediator();
+      mediator.setUpperBounds(Arrays.asList(5.0, 5.0));
+      mediator.setLowerBounds(Arrays.asList(-5.0, -5.0));
+      mediator.setDimension(2);
+      mediator.setCostFunction(Rosenbrock);
+
+      BeeSwarm swarm = new BeeSwarm();
+      swarm.setMediator(mediator);
+      swarm.setMaxIterations(50);
+
+      Bee bestSolution = swarm.solve();
+      logger.info("best solution: {} cost: {}", bestSolution, bestSolution.getCost());
+
+      List<Double> trend = swarm.getCostTrend();
+      logger.info("trend: {}", trend);
+
+      assertThat(bestSolution.getCost()).isCloseTo(0, within(0.01));
 
    }
 

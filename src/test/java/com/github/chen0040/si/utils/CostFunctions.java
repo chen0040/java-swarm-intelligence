@@ -11,7 +11,7 @@ import java.util.List;
 public class CostFunctions {
    public static class Rosenbrock implements CostFunction
    {
-      public double calcFitness(double x, double y)
+      public double calc(double x, double y)
       {
          double expr1 = (x*x - y);
          double expr2 = 1 - x;
@@ -20,7 +20,7 @@ public class CostFunctions {
 
 
       @Override public double evaluate(List<Double> solution, List<Double> lowerBounds, List<Double> upperBounds) {
-         return calcFitness(solution.get(0), solution.get(1));
+         return calc(solution.get(0), solution.get(1));
       }
 
       public List<Double> lowerBounds() {
@@ -39,13 +39,13 @@ public class CostFunctions {
 
    public static class Rastrigin implements CostFunction {
 
-      public double calcFitness(double x, double y)
+      public double calc(double x, double y)
       {
          return (20 + x*x - 10*Math.cos(2*Math.PI*x) + y*y - 10*Math.cos(2*Math.PI*y));
       }
 
       @Override public double evaluate(List<Double> solution, List<Double> lowerBounds, List<Double> upperBounds) {
-         return calcFitness(solution.get(0), solution.get(1));
+         return calc(solution.get(0), solution.get(1));
       }
 
       public int dimension(){
@@ -65,13 +65,13 @@ public class CostFunctions {
 
    public static class Griewangk implements CostFunction {
 
-      public double calcFitness(double x, double y)
+      public double calc(double x, double y)
       {
          return (1 + (x*x) / 4000 + (y*y) / 4000 - Math.cos(x) * Math.cos(y / Math.sqrt(2)));
       }
 
       @Override public double evaluate(List<Double> solution, List<Double> lowerBounds, List<Double> upperBounds) {
-         return calcFitness(solution.get(0), solution.get(1));
+         return calc(solution.get(0), solution.get(1));
       }
 
       public int dimension(){
