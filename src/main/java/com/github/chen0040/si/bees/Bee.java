@@ -1,4 +1,4 @@
-﻿package com.github.chen0040.si.bees;
+package com.github.chen0040.si.bees;
 
 
 import lombok.Getter;

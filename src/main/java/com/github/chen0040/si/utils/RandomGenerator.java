@@ -10,4 +10,6 @@ import java.io.Serializable;
 public interface RandomGenerator extends Serializable {
    double nextDouble();
    double normal();
+
+   int nextInt(int upper);
 }

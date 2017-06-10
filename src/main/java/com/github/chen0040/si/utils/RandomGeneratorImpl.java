@@ -22,4 +22,9 @@ public class RandomGeneratorImpl implements RandomGenerator {
       NormalDistribution normalDistribution = new NormalDistribution();
       return normalDistribution.sample();
    }
+
+
+   @Override public int nextInt(int upper) {
+      return random.nextInt(upper);
+   }
 }
