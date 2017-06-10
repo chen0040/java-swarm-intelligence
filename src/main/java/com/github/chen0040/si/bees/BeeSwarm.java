@@ -1,6 +1,7 @@
-﻿package com.github.chen0040.si;
+﻿package com.github.chen0040.si.bees;
 
 
+import com.github.chen0040.si.utils.QuickSort;
 import lombok.Getter;
 import lombok.Setter;
 

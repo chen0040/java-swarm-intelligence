@@ -1,5 +1,7 @@
-package com.github.chen0040.si;
+package com.github.chen0040.si.utils;
 
+
+import org.apache.commons.math3.distribution.NormalDistribution;
 
 import java.util.Random;
 
@@ -10,7 +12,14 @@ import java.util.Random;
 public class RandomGeneratorImpl implements RandomGenerator {
    private static final long serialVersionUID = 8863580512109291828L;
    private Random random = new Random();
+
+
    @Override public double nextDouble() {
       return random.nextDouble();
+   }
+
+   @Override public double normal() {
+      NormalDistribution normalDistribution = new NormalDistribution();
+      return normalDistribution.sample();
    }
 }

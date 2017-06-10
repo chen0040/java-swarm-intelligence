@@ -1,6 +1,9 @@
-package com.github.chen0040.si;
+package com.github.chen0040.si.bees;
 
 
+import com.github.chen0040.si.utils.CostFunction;
+import com.github.chen0040.si.utils.RandomGenerator;
+import com.github.chen0040.si.utils.RandomGeneratorImpl;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +28,9 @@ public class BeeMediator implements Serializable {
 
    private RandomGenerator generator = new RandomGeneratorImpl();
 
+   private double mutateSd = 1.0;
+
+
 
    public double evaluate(List<Double> solution, List<Double> lowerBounds, List<Double> upperBounds) {
       return costFunction.evaluate(solution, lowerBounds, upperBounds);
@@ -39,6 +45,6 @@ public class BeeMediator implements Serializable {
 
 
    public double mutateWithinBounds(int index, Double original) {
-      return 0;
+      return Math.min(upperBounds.get(index), Math.max(lowerBounds.get(index), original + generator.normal() * mutateSd));
    }
 }

@@ -1,4 +1,4 @@
-package com.github.chen0040.si;
+package com.github.chen0040.si.utils;
 
 
 import java.io.Serializable;
@@ -9,4 +9,5 @@ import java.io.Serializable;
  */
 public interface RandomGenerator extends Serializable {
    double nextDouble();
+   double normal();
 }
