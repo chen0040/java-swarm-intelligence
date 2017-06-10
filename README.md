@@ -11,6 +11,18 @@ Optimization framework based on swarm intelligence
 * Ant Colony Optimization (Combinatorial Optimization)
 * Particle Swarm Optimization (Continuous Optimization)
 
+# Install
+
+Add the following dependency to your POM file:
+
+```xml
+<dependency>
+  <groupId>com.github.chen0040</groupId>
+  <artifactId>java-swarm-intelligence</artifactId>
+  <version>1.0.1</version>
+</dependency>
+```
+
 # Usage
 
 ### Bees Swarm 
