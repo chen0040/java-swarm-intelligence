@@ -30,7 +30,7 @@ public class BeeMediator implements Serializable {
 
    private double mutateSd = 1.0;
 
-
+   private int dimension = 2;
 
    public double evaluate(List<Double> solution, List<Double> lowerBounds, List<Double> upperBounds) {
       return costFunction.evaluate(solution, lowerBounds, upperBounds);

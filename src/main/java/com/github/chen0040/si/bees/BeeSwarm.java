@@ -24,20 +24,22 @@ public class BeeSwarm implements Serializable {
    protected final List<Bee> patches = new ArrayList<>();
    private Bee globalBestSolution = null;
 
-   private double tolerance = 0.000001;
-   private int maxIterations = 100000;
+   private double tolerance = -1; //0.000001;
+   private int maxIterations = 100;
 
    private BeeMediator mediator = new BeeMediator();
 
+   private List<Double> costTrend = new ArrayList<>();
+
    public void initialize()
    {
+      costTrend.clear();
      patches.clear();
 
      for(int i=0; i < scoutBeeCount; ++i){
          Bee bee = new Bee();
-         bee.initialize(mediator);
          bee.randomSearch(mediator);
-         patches.add(new Bee());
+         patches.add(bee);
      }
 
      QuickSort.sort(patches, Comparator.comparingDouble(Bee::getCost));
@@ -52,7 +54,7 @@ public class BeeSwarm implements Serializable {
      double cost_reduction = tolerance;
      double global_best_solution_cost = globalBestSolution.getCost();
      double prev_global_best_solution_cost = global_best_solution_cost;
-     while (cost_reduction >= tolerance && iteration < maxIterations)
+     while ((tolerance < 0 || cost_reduction >= tolerance) && iteration < maxIterations)
      {
          prev_global_best_solution_cost = global_best_solution_cost;
          iterate();
@@ -103,5 +105,7 @@ public class BeeSwarm implements Serializable {
 
      QuickSort.sort(patches, Comparator.comparingDouble(Bee::getCost));
      globalBestSolution = patches.get(0).makeCopy();
+
+     costTrend.add(globalBestSolution.getCost());
    }
 }
