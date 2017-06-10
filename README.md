@@ -7,4 +7,10 @@ Optimization framework based on swarm intelligence
 
 # Features
 
-* Bees algorithm
+* Bees algorithm (Continuous Optimization)
+* Ant Colony Optimization (Combinatorial Optimization)
+* Particle Swarm Optimization (Continuous Optimization)
+
+
+
+
