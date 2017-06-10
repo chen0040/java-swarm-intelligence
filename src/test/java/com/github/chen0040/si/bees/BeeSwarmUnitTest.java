@@ -44,5 +44,51 @@ public class BeeSwarmUnitTest {
 
    }
 
+   @Test
+   public void test_Rastrigin() {
+      CostFunctions.Rastrigin Rastrigin = new CostFunctions.Rastrigin();
+
+      BeeMediator mediator = new BeeMediator();
+      mediator.setUpperBounds(Rastrigin.upperBounds());
+      mediator.setLowerBounds(Rastrigin.lowerBounds());
+      mediator.setDimension(Rastrigin.dimension());
+      mediator.setCostFunction(Rastrigin);
+
+      BeeSwarm swarm = new BeeSwarm();
+      swarm.setMediator(mediator);
+      swarm.setMaxIterations(50);
+
+      Bee bestSolution = swarm.solve();
+      logger.info("best solution: {} cost: {}", bestSolution, bestSolution.getCost());
+
+      List<Double> trend = swarm.getCostTrend();
+      logger.info("trend: {}", trend);
+
+      assertThat(bestSolution.getCost()).isCloseTo(0.00, within(0.1));
+   }
+
+   @Test
+   public void test_Griewangk() {
+      CostFunctions.Griewangk Griewangk = new CostFunctions.Griewangk();
+
+      BeeMediator mediator = new BeeMediator();
+      mediator.setUpperBounds(Griewangk.upperBounds());
+      mediator.setLowerBounds(Griewangk.lowerBounds());
+      mediator.setDimension(Griewangk.dimension());
+      mediator.setCostFunction(Griewangk);
+
+      BeeSwarm swarm = new BeeSwarm();
+      swarm.setMediator(mediator);
+      swarm.setMaxIterations(100);
+
+      Bee bestSolution = swarm.solve();
+      logger.info("best solution: {} cost: {}", bestSolution, bestSolution.getCost());
+
+      List<Double> trend = swarm.getCostTrend();
+      logger.info("trend: {}", trend);
+
+      assertThat(bestSolution.getCost()).isCloseTo(0.00, within(0.1));
+   }
+
 
 }
