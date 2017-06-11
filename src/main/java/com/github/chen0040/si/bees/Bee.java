@@ -1,6 +1,7 @@
 package com.github.chen0040.si.bees;
 
 
+import com.github.chen0040.si.utils.Mediator;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,7 +28,7 @@ public class Bee implements Serializable {
     }
 
     //local search around rhs
-    public Bee dance(BeeMediator mediator) {
+    public Bee dance(Mediator mediator) {
         Bee clone = makeCopy();
         clone.mutate(mediator);
         return clone;
@@ -53,21 +54,21 @@ public class Bee implements Serializable {
         this.costValid = that.costValid;
     }
 
-    void mutate(BeeMediator mediator){
+    void mutate(Mediator mediator){
         for(int i=0; i < mediator.getDimension(); ++i){
             solution.set(i, mediator.mutateWithinBounds(i, solution.get(i)));
         }
-        cost = mediator.evaluate(solution, mediator.lowerBounds, mediator.upperBounds);
+        cost = mediator.evaluate(solution);
         costValid = true;
     }
 
-    public void randomSearch(BeeMediator mediator) {
+    public void randomSearch(Mediator mediator) {
         int N = mediator.getDimension();
         solution.clear();
         for(int i=0; i < N; ++i){
             solution.add(mediator.randomWithinBounds(i));
         }
-        cost = mediator.evaluate(solution, mediator.lowerBounds, mediator.upperBounds);
+        cost = mediator.evaluate(solution);
         costValid = true;
     }
 

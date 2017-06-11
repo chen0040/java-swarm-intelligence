@@ -1,6 +1,7 @@
 package com.github.chen0040.si.bees;
 
 
+import com.github.chen0040.si.utils.Mediator;
 import com.github.chen0040.si.utils.QuickSort;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public class BeeSwarm implements Serializable {
    private double tolerance = -1; //0.000001;
    private int maxIterations = 100;
 
-   private BeeMediator mediator = new BeeMediator();
+   private Mediator mediator = new Mediator();
 
    private List<Double> costTrend = new ArrayList<>();
 

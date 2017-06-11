@@ -3,6 +3,7 @@ package com.github.chen0040.si.bees;
 
 import com.github.chen0040.si.utils.CostFunction;
 import com.github.chen0040.si.utils.CostFunctions;
+import com.github.chen0040.si.utils.Mediator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -12,7 +13,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.testng.Assert.*;
 
 
 /**
@@ -25,7 +25,7 @@ public class BeeSwarmUnitTest {
    @Test
    public void test_Rosenbrock() {
       CostFunctions.Rosenbrock Rosenbrock = new CostFunctions.Rosenbrock();
-      BeeMediator mediator = new BeeMediator();
+      Mediator mediator = new Mediator();
       mediator.setUpperBounds(Rosenbrock.upperBounds());
       mediator.setLowerBounds(Rosenbrock.lowerBounds());
       mediator.setDimension(Rosenbrock.dimension());
@@ -59,7 +59,7 @@ public class BeeSwarmUnitTest {
          }
       };
 
-      BeeMediator mediator = new BeeMediator();
+      Mediator mediator = new Mediator();
       mediator.setUpperBounds(Arrays.asList(5.0, 5.0));
       mediator.setLowerBounds(Arrays.asList(-5.0, -5.0));
       mediator.setDimension(2);
@@ -83,7 +83,7 @@ public class BeeSwarmUnitTest {
    public void test_Rastrigin() {
       CostFunctions.Rastrigin Rastrigin = new CostFunctions.Rastrigin();
 
-      BeeMediator mediator = new BeeMediator();
+      Mediator mediator = new Mediator();
       mediator.setUpperBounds(Rastrigin.upperBounds());
       mediator.setLowerBounds(Rastrigin.lowerBounds());
       mediator.setDimension(Rastrigin.dimension());
@@ -106,7 +106,7 @@ public class BeeSwarmUnitTest {
    public void test_Griewangk() {
       CostFunctions.Griewangk Griewangk = new CostFunctions.Griewangk();
 
-      BeeMediator mediator = new BeeMediator();
+      Mediator mediator = new Mediator();
       mediator.setUpperBounds(Griewangk.upperBounds());
       mediator.setLowerBounds(Griewangk.lowerBounds());
       mediator.setDimension(Griewangk.dimension());

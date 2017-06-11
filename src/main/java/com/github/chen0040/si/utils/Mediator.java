@@ -1,4 +1,4 @@
-package com.github.chen0040.si.bees;
+package com.github.chen0040.si.utils;
 
 
 import com.github.chen0040.si.utils.CostFunction;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class BeeMediator implements Serializable {
+public class Mediator implements Serializable {
    private static final long serialVersionUID = -3133404010260276170L;
    protected List<Double> lowerBounds = new ArrayList<>();
    protected List<Double> upperBounds = new ArrayList<>();
@@ -32,7 +32,7 @@ public class BeeMediator implements Serializable {
 
    private int dimension = 2;
 
-   public double evaluate(List<Double> solution, List<Double> lowerBounds, List<Double> upperBounds) {
+   public double evaluate(List<Double> solution) {
       return costFunction.evaluate(solution, lowerBounds, upperBounds);
    }
 
@@ -46,5 +46,10 @@ public class BeeMediator implements Serializable {
 
    public double mutateWithinBounds(int index, Double original) {
       return Math.min(upperBounds.get(index), Math.max(lowerBounds.get(index), original + generator.normal() * mutateSd));
+   }
+
+
+   public double nextDouble() {
+      return generator.nextDouble();
    }
 }
