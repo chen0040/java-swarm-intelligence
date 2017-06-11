@@ -47,12 +47,12 @@ public class ParticleSwarm {
          mLocalBestParticles.add(p.makeCopy());
       }
 
-      UpdateParticleCosts();
-      UpdateLocalBestParticles();
-      UpdateGlobalBestParticle();
+      updateParticleCosts();
+      updateLocalBestParticles();
+      updateGlobalBestParticle();
    }
 
-   public void UpdateParticleCosts()
+   public void updateParticleCosts()
    {
       for (int i = 0; i < mParticles.size(); ++i)
       {
@@ -60,7 +60,7 @@ public class ParticleSwarm {
       }
    }
 
-   public void UpdateLocalBestParticles()
+   public void updateLocalBestParticles()
    {
       for(int i=0; i < mParticles.size(); ++i)
       {
@@ -82,7 +82,7 @@ public class ParticleSwarm {
       while ((tolerance < 0 || cost_reduction >= tolerance) && iteration < maxIterations)
       {
          prev_global_best_soution_cost = global_best_solution_cost;
-         Iterate();
+         iterate();
          global_best_solution_cost = mGlobalBestSolution.getCost();
          cost_reduction = prev_global_best_soution_cost - global_best_solution_cost;
          iteration++;
@@ -93,7 +93,7 @@ public class ParticleSwarm {
 
 
 
-   public void UpdateParticleVelocity()
+   public void updateParticleVelocity()
    {
       int dimension = mediator.getDimension();
       for (int i = 0; i < mParticles.size(); ++i)
@@ -117,7 +117,7 @@ public class ParticleSwarm {
       }
    }
 
-   public void UpdateParticlePosition()
+   public void updateParticlePosition()
    {
       int dimension = mediator.getDimension();
       for (int i = 0; i < mParticles.size(); ++i)
@@ -132,7 +132,7 @@ public class ParticleSwarm {
       }
    }
 
-   public void UpdateGlobalBestParticle()
+   public void updateGlobalBestParticle()
    {
       Particle best_particle = null;
       for (int i = 0; i < mParticles.size(); ++i)
@@ -148,12 +148,12 @@ public class ParticleSwarm {
       }
    }
 
-   public void Iterate()
+   public void iterate()
    {
-      UpdateParticleVelocity();
-      UpdateParticlePosition();
-      UpdateParticleCosts();
-      UpdateLocalBestParticles();
-      UpdateGlobalBestParticle();
+      updateParticleVelocity();
+      updateParticlePosition();
+      updateParticleCosts();
+      updateLocalBestParticles();
+      updateGlobalBestParticle();
    }
 }
