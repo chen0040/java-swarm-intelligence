@@ -15,18 +15,19 @@ import java.util.List;
 @Getter
 @Setter
 public class ParticleSwarm {
-   protected final List<Particle> mParticles = new ArrayList<>();
-   protected final List<Particle> mLocalBestParticles = new ArrayList<>();
-   protected Particle mGlobalBestSolution = null;
+   protected final List<Particle> particles = new ArrayList<>();
+   protected final List<Particle> localBestParticles = new ArrayList<>();
+   protected Particle globalBestSolution = null;
 
-   protected double mC1 = 1;
-   protected double mC2 = 2;
+   protected double C1 = 1;
+   protected double C2 = 2;
 
    private int populationSize = 1000;
 
    private double tolerance = -1; //0.000001;
    private int maxIterations = 100;
 
+   private List<Double> costTrend = new ArrayList<>();
 
    private Mediator mediator = new Mediator();
 
@@ -38,13 +39,17 @@ public class ParticleSwarm {
 
    public void Initialize()
    {
-      mGlobalBestSolution = create();
-      mGlobalBestSolution.evaluate(mediator);
+      particles.clear();
+      localBestParticles.clear();
+      costTrend.clear();
+
+      globalBestSolution = create();
+      globalBestSolution.evaluate(mediator);
       for (int i = 0; i < populationSize; ++i)
       {
          Particle p = create();
-         mParticles.add(p);
-         mLocalBestParticles.add(p.makeCopy());
+         particles.add(p);
+         localBestParticles.add(p.makeCopy());
       }
 
       updateParticleCosts();
@@ -54,19 +59,19 @@ public class ParticleSwarm {
 
    public void updateParticleCosts()
    {
-      for (int i = 0; i < mParticles.size(); ++i)
+      for (int i = 0; i < particles.size(); ++i)
       {
-         mParticles.get(i).evaluate(mediator);
+         particles.get(i).evaluate(mediator);
       }
    }
 
    public void updateLocalBestParticles()
    {
-      for(int i=0; i < mParticles.size(); ++i)
+      for(int i = 0; i < particles.size(); ++i)
       {
-         if (mParticles.get(i).isBetterThan(mLocalBestParticles.get(i)))
+         if (particles.get(i).isBetterThan(localBestParticles.get(i)))
          {
-            mLocalBestParticles.get(i).copy(mParticles.get(i));
+            localBestParticles.get(i).copy(particles.get(i));
          }
       }
    }
@@ -83,12 +88,12 @@ public class ParticleSwarm {
       {
          prev_global_best_soution_cost = global_best_solution_cost;
          iterate();
-         global_best_solution_cost = mGlobalBestSolution.getCost();
+         global_best_solution_cost = globalBestSolution.getCost();
          cost_reduction = prev_global_best_soution_cost - global_best_solution_cost;
          iteration++;
       }
 
-      return mGlobalBestSolution;
+      return globalBestSolution;
    }
 
 
@@ -96,23 +101,23 @@ public class ParticleSwarm {
    public void updateParticleVelocity()
    {
       int dimension = mediator.getDimension();
-      for (int i = 0; i < mParticles.size(); ++i)
+      for (int i = 0; i < particles.size(); ++i)
       {
          for (int j = 0; j < dimension; ++j)
          {
-            double oldV = mParticles.get(i).getVelocity(j);
-            double Xj = mParticles.get(i).getPosition(j);
-            double X_lbest = mLocalBestParticles.get(i).getPosition(j);
-            double X_gbest = mGlobalBestSolution.getPosition(j);
+            double oldV = particles.get(i).getVelocity(j);
+            double Xj = particles.get(i).getPosition(j);
+            double X_lbest = localBestParticles.get(i).getPosition(j);
+            double X_gbest = globalBestSolution.getPosition(j);
 
             double r1 = mediator.nextDouble();
             double r2 = mediator.nextDouble();
             double r3 = mediator.nextDouble();
 
             double w = 0.5 + r3 / 2;
-            double newV = w * oldV + mC1 * r1 * (X_lbest - Xj) + mC2 * r2 * (X_gbest - Xj);
+            double newV = w * oldV + C1 * r1 * (X_lbest - Xj) + C2 * r2 * (X_gbest - Xj);
 
-            mParticles.get(i).setVelocity(j, newV);
+            particles.get(i).setVelocity(j, newV);
          }
       }
    }
@@ -120,14 +125,14 @@ public class ParticleSwarm {
    public void updateParticlePosition()
    {
       int dimension = mediator.getDimension();
-      for (int i = 0; i < mParticles.size(); ++i)
+      for (int i = 0; i < particles.size(); ++i)
       {
          for (int j = 0; j < dimension; ++j)
          {
-            double Vj = mParticles.get(i).getVelocity(j);
-            double Xj = mParticles.get(i).getPosition(j);
+            double Vj = particles.get(i).getVelocity(j);
+            double Xj = particles.get(i).getPosition(j);
 
-            mParticles.get(i).setPosition(j, Xj + Vj);
+            particles.get(i).setPosition(j, Xj + Vj);
          }
       }
    }
@@ -135,16 +140,16 @@ public class ParticleSwarm {
    public void updateGlobalBestParticle()
    {
       Particle best_particle = null;
-      for (int i = 0; i < mParticles.size(); ++i)
+      for (int i = 0; i < particles.size(); ++i)
       {
-         if (mParticles.get(i).isBetterThan(mGlobalBestSolution))
+         if (particles.get(i).isBetterThan(globalBestSolution))
          {
-            best_particle = mParticles.get(i);
+            best_particle = particles.get(i);
          }
       }
       if (best_particle != null)
       {
-         mGlobalBestSolution.copy(best_particle);
+         globalBestSolution.copy(best_particle);
       }
    }
 
@@ -155,5 +160,6 @@ public class ParticleSwarm {
       updateParticleCosts();
       updateLocalBestParticles();
       updateGlobalBestParticle();
+      costTrend.add(globalBestSolution.getCost());
    }
 }

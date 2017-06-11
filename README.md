@@ -41,7 +41,7 @@ CostFunction Rosenbrock = new CostFunction() {
     return calc(solution.get(0), solution.get(1));
  }
 };
-BeeMediator mediator = new BeeMediator();
+Mediator mediator = new Mediator();
 mediator.setUpperBounds(Arrays.asList(5.0, 5.0));
 mediator.setLowerBounds(Arrays.asList(-5.0, -5.0));
 mediator.setDimension(2);
@@ -58,6 +58,41 @@ List<Double> trend = swarm.getCostTrend();
 logger.info("trend: {}", trend);
 ```
 
+### Particle Swarm Optimization
+
+The sample code below shows how to use the PSO algorithm to solve the Rosenbrock minimization problem:
+
+```java
+CostFunction Rosenbrock = new CostFunction() {
+ public double calc(double x, double y)
+ {
+    double expr1 = (x*x - y);
+    double expr2 = 1 - x;
+    return 100 * expr1*expr1 + expr2*expr2;
+ }
+ @Override public double evaluate(List<Double> solution, List<Double> lowerBounds, List<Double> upperBounds) {
+    return calc(solution.get(0), solution.get(1));
+ }
+};
+
+Mediator mediator = new Mediator();
+mediator.setUpperBounds(Arrays.asList(5.0, 5.0));
+mediator.setLowerBounds(Arrays.asList(-5.0, -5.0));
+mediator.setDimension(2);
+mediator.setCostFunction(Rosenbrock);
+
+ParticleSwarm swarm = new ParticleSwarm();
+swarm.setMediator(mediator);
+swarm.setMaxIterations(50);
+
+Particle bestSolution = swarm.solve();
+logger.info("best solution: {} cost: {}", bestSolution, bestSolution.getCost());
+
+List<Double> trend = swarm.getCostTrend();
+logger.info("trend: {}", trend);
+
+assertThat(bestSolution.getCost()).isCloseTo(0, within(0.01));
+```
 
 
 
