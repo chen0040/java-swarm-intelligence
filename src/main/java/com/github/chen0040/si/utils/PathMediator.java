@@ -37,4 +37,9 @@ public class PathMediator implements Serializable {
    public List<Integer> getCandidateNextStates(List<Integer> path, int current_state) {
       return new ArrayList<>();
    }
+
+
+   public double getReward(List<Integer> path, double cost) {
+      return costFunction.getReward(path, cost);
+   }
 }

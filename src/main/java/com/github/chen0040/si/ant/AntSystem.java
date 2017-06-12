@@ -36,9 +36,9 @@ public class AntSystem {
    private double tolerance = -1; //0.000001;
    private int maxIterations = 100;
 
-   protected double GetRewardPerStateTransition(Ant ant)
+   protected double getRewardPerStateTransition(Ant ant)
    {
-      return 1.0 / ant.getCost();
+      return mediator.getReward(ant.getVisitedStates(), ant.getCost());
    }
 
    public Ant GenerateAnt()
@@ -46,7 +46,7 @@ public class AntSystem {
       return new Ant();
    }
 
-   public void Initialize()
+   public void initialize()
    {
       mGlobalBestAnt = GenerateAnt();
 
@@ -65,7 +65,7 @@ public class AntSystem {
       }
    }
 
-   public void UpdateAntCost()
+   public void updateAntCost()
    {
       for (int i = 0; i < populationSize; ++i)
       {
@@ -75,7 +75,7 @@ public class AntSystem {
 
    public Ant solve()
    {
-      Initialize();
+      initialize();
       int iteration = 0;
       double cost_reduction = tolerance;
       double global_best_solution_cost = Double.MAX_VALUE;
@@ -92,7 +92,7 @@ public class AntSystem {
       return mGlobalBestAnt;
    }
 
-   public void UpdateGlobalBestAnt()
+   public void updateGlobalBestAnt()
    {
       Ant best_particle = null;
       for (int i = 0; i < populationSize; ++i)
@@ -104,26 +104,26 @@ public class AntSystem {
       }
       if (best_particle != null)
       {
-         mGlobalBestAnt.Copy(best_particle);
+         mGlobalBestAnt.copy(best_particle);
       }
    }
 
    public void Iterate()
    {
-      AntTraverse();
-      UpdateAntCost();
-      EvaporatePheromone();
-      UpdateGlobalBestAnt();
-      DepositPheromone();
+      antTraverse();
+      updateAntCost();
+      evaporatePheromone();
+      updateGlobalBestAnt();
+      depositPheromone();
    }
 
-   public void AntTraverse()
+   public void antTraverse()
    {
       int ant_count = populationSize;
 
       for (int i = 0; i < ant_count; ++i)
       {
-         mAnts.get(i).Reset();
+         mAnts.get(i).reset();
       }
 
       for (int state_index = 0; state_index < mStateCount; ++state_index)
@@ -131,18 +131,18 @@ public class AntSystem {
          for (int i = 0; i < ant_count; ++i)
          {
             Ant ant = mAnts.get(i);
-            TransiteState(ant, state_index);
+            transitStates(ant, state_index);
          }
       }
    }
 
-   public void DepositPheromone()
+   public void depositPheromone()
    {
       for (int ant_index = 0; ant_index < populationSize; ++ant_index)
       {
          Ant ant = mAnts.get(ant_index);
 
-         List<TupleTwo<Integer, Integer>> path = ant.FindTrasitionPath();
+         List<TupleTwo<Integer, Integer>> path = ant.path();
          int segment_count = path.size();
          for (int i = 0; i < segment_count; ++i)
          {
@@ -150,7 +150,7 @@ public class AntSystem {
             int state1_id = state_transition._1();
             int state2_id = state_transition._2();
             double pheromone = mPheromones.get(state1_id, state2_id);
-            double p_delta = GetRewardPerStateTransition(ant);
+            double p_delta = getRewardPerStateTransition(ant);
             pheromone += m_alpha * p_delta;
 
             mPheromones.set(state1_id, state2_id, pheromone);
@@ -162,7 +162,7 @@ public class AntSystem {
       }
    }
 
-   public void EvaporatePheromone()
+   public void evaporatePheromone()
    {
       double pheromone = 0;
       for (int i = 0; i < mStateCount; ++i)
@@ -182,11 +182,11 @@ public class AntSystem {
 
    public List<Integer> getCandidateNextStates(Ant ant, int state_id)
    {
-      List<Integer> set = mediator.getCandidateNextStates(ant.mData, state_id);
+      List<Integer> set = mediator.getCandidateNextStates(ant.visitedStates, state_id);
       if(set.isEmpty()) {
          List<Integer> candidate_states = new ArrayList<>();
          for (int i = 0; i < mStateCount; ++i) {
-            if (!ant.HasTraversedState(state_id)) {
+            if (!ant.hasVisited(state_id)) {
                candidate_states.add(i);
             }
          }
@@ -201,9 +201,9 @@ public class AntSystem {
       return mediator.heuristicCost(state1_id, state2_id);
    }
 
-   public void TransiteState(Ant ant, int state_index)
+   public void transitStates(Ant ant, int state_index)
    {
-      int current_state_id = ant.getCurrentState();
+      int current_state_id = ant.currentState();
       List<Integer> candidate_states = getCandidateNextStates(ant, current_state_id);
 
       if (candidate_states.isEmpty()) return;
@@ -237,7 +237,7 @@ public class AntSystem {
 
       if (selected_state_id != -1)
       {
-         ant.Add(selected_state_id);
+         ant.visit(selected_state_id);
       }
    }
 }

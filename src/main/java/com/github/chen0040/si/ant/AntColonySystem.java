@@ -11,9 +11,9 @@ import java.util.List;
  */
 public class AntColonySystem extends AntSystem {
    @Override
-   public void DepositPheromone()
+   public void depositPheromone()
    {
-      List<TupleTwo<Integer,Integer>> path = mGlobalBestAnt.FindTrasitionPath();
+      List<TupleTwo<Integer,Integer>> path = mGlobalBestAnt.path();
       int segment_count = path.size();
       for (int i = 0; i < segment_count; ++i)
       {
@@ -21,7 +21,7 @@ public class AntColonySystem extends AntSystem {
          int state1_id = state_transition._1();
          int state2_id = state_transition._2();
          double pheromone = mPheromones.get(state1_id, state2_id);
-         double p_delta = GetRewardPerStateTransition(mGlobalBestAnt);
+         double p_delta = getRewardPerStateTransition(mGlobalBestAnt);
          pheromone += m_alpha * p_delta;
 
          mPheromones.set(state1_id, state2_id, pheromone);
@@ -33,9 +33,9 @@ public class AntColonySystem extends AntSystem {
    }
 
    @Override
-   public void TransiteState(Ant ant, int state_index)
+   public void transitStates(Ant ant, int state_index)
    {
-      int current_state_id = ant.getCurrentState();
+      int current_state_id = ant.currentState();
       List<Integer> candidate_states = getCandidateNextStates(ant, current_state_id);
 
       if (candidate_states.isEmpty()) return;
@@ -86,12 +86,12 @@ public class AntColonySystem extends AntSystem {
 
       if (selected_state_id != -1)
       {
-         ant.Add(selected_state_id);
-         LocalPheromoneUpdate(current_state_id, selected_state_id);
+         ant.visit(selected_state_id);
+         localPheromoneUpdate(current_state_id, selected_state_id);
       }
    }
 
-   protected void LocalPheromoneUpdate(int state1_id, int state2_id)
+   protected void localPheromoneUpdate(int state1_id, int state2_id)
    {
       double pheromone = mPheromones.get(state1_id, state2_id);
 

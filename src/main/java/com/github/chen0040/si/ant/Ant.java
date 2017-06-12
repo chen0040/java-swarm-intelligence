@@ -2,7 +2,6 @@ package com.github.chen0040.si.ant;
 
 
 import com.github.chen0040.data.utils.TupleTwo;
-import com.github.chen0040.si.bees.Bee;
 import com.github.chen0040.si.utils.PathMediator;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,28 +17,28 @@ import java.util.List;
 @Getter
 @Setter
 public class Ant {
-   protected final List<Integer> mData = new ArrayList<>();
+   protected final List<Integer> visitedStates = new ArrayList<>();
    private boolean costValid = false;
    private double cost;
 
-   public int getCurrentState()
+   public int currentState()
    {
-      if(mData.isEmpty()) {
+      if(visitedStates.isEmpty()) {
          return -1;
       } else {
-         return mData.get(mData.size()-1);
+         return visitedStates.get(visitedStates.size()-1);
       }
    }
 
-   public List<TupleTwo<Integer, Integer>> FindTrasitionPath()
+   public List<TupleTwo<Integer, Integer>> path()
    {
-      if(mData.isEmpty()) return new ArrayList<>();
+      if(visitedStates.isEmpty()) return new ArrayList<>();
 
       List<TupleTwo<Integer, Integer>> path = new ArrayList<>();
-      for(int i=0; i < mData.size()-1; ++i)
+      for(int i = 0; i < this.visitedStates.size()-1; ++i)
       {
-         int state1_id = mData.get(i);
-         int state2_id = mData.get(i + 1);
+         int state1_id = this.visitedStates.get(i);
+         int state2_id = this.visitedStates.get(i + 1);
          path.add(new TupleTwo<>(state1_id, state2_id));
       }
 
@@ -50,50 +49,32 @@ public class Ant {
    {
    }
 
-   public void Add(int state)
+   public void visit(int state)
    {
-      mData.add(state);
+      visitedStates.add(state);
       costValid = false;
    }
 
-   public void Reset()
+   public void reset()
    {
-      mData.clear();
+      visitedStates.clear();
       costValid = false;
    }
 
    public int pathLength()
    {
-      return mData.size();
+      return visitedStates.size();
    }
 
-   public boolean HasTraversedState(int state_id)
+   public boolean hasVisited(int state_id)
    {
-      return mData.contains(state_id);
+      return visitedStates.contains(state_id);
    }
 
-   public int getState(int index) {
-      return mData.get(index);
-   }
-
-   public void setState(int index, int value) {
-      if(mData.get(index) != value) {
-         mData.set(index, value);
-         costValid = false;
-      }
-   }
-
-   public Ant makeCopy()
+   public void copy(Ant rhs)
    {
-      Ant clone = new Ant();
-      clone.Copy(this);
-      return clone;
-   }
-
-   public void Copy(Ant rhs)
-   {
-      mData.clear();
-      mData.addAll(rhs.mData);
+      visitedStates.clear();
+      visitedStates.addAll(rhs.visitedStates);
       costValid = rhs.costValid;
       cost = rhs.cost;
    }
@@ -107,7 +88,7 @@ public class Ant {
 
 
    public void evaluate(PathMediator mediator) {
-      cost = mediator.evaluate(mData);
+      cost = mediator.evaluate(visitedStates);
       costValid = true;
    }
 }

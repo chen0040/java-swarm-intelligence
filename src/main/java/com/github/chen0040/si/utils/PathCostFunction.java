@@ -11,4 +11,8 @@ import java.util.List;
 public interface PathCostFunction extends Serializable {
    double evaluate(List<Integer> path);
    double heuristicCost(int state1, int state2);
+
+   default double getReward(List<Integer> path, double cost) {
+      return 1.0 / cost;
+   }
 }
