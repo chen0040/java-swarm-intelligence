@@ -1,9 +1,6 @@
 package com.github.chen0040.si.utils;
 
 
-import com.github.chen0040.si.utils.CostFunction;
-import com.github.chen0040.si.utils.RandomGenerator;
-import com.github.chen0040.si.utils.RandomGeneratorImpl;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,7 +23,7 @@ public class Mediator implements Serializable {
 
    private CostFunction costFunction = null;
 
-   private RandomGenerator generator = new RandomGeneratorImpl();
+   private RandomGenerator randomGenerator = new RandomGeneratorImpl();
 
    private double mutateSd = 1.0;
 
@@ -40,16 +37,16 @@ public class Mediator implements Serializable {
    public double randomWithinBounds(int index) {
       double lowerBound = lowerBounds.get(index);
       double upperBound = upperBounds.get(index);
-      return lowerBound + generator.nextDouble() * (upperBound - lowerBound);
+      return lowerBound + randomGenerator.nextDouble() * (upperBound - lowerBound);
    }
 
 
    public double mutateWithinBounds(int index, Double original) {
-      return Math.min(upperBounds.get(index), Math.max(lowerBounds.get(index), original + generator.normal() * mutateSd));
+      return Math.min(upperBounds.get(index), Math.max(lowerBounds.get(index), original + randomGenerator.normal() * mutateSd));
    }
 
 
    public double nextDouble() {
-      return generator.nextDouble();
+      return randomGenerator.nextDouble();
    }
 }

@@ -2,6 +2,10 @@ package com.github.chen0040.si.ant;
 
 
 import com.github.chen0040.data.utils.TupleTwo;
+import com.github.chen0040.si.bees.Bee;
+import com.github.chen0040.si.utils.PathMediator;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +15,8 @@ import java.util.List;
  * Created by xschen on 12/6/2017.
  * Ant class
  */
+@Getter
+@Setter
 public class Ant {
    protected final List<Integer> mData = new ArrayList<>();
    private boolean costValid = false;
@@ -90,5 +96,18 @@ public class Ant {
       mData.addAll(rhs.mData);
       costValid = rhs.costValid;
       cost = rhs.cost;
+   }
+
+   public boolean isBetterThan(Ant that) {
+      if(!that.costValid) {
+         return true;
+      }
+      return Double.compare(this.cost, that.cost) < 0;
+   }
+
+
+   public void evaluate(PathMediator mediator) {
+      cost = mediator.evaluate(mData);
+      costValid = true;
    }
 }
