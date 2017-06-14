@@ -99,7 +99,7 @@ public class BeeSwarmUnitTest {
       List<Double> trend = swarm.getCostTrend();
       logger.info("trend: {}", trend);
 
-      assertThat(bestSolution.getCost()).isCloseTo(0.00, within(0.1));
+      assertThat(bestSolution.getCost()).isCloseTo(0.00, within(0.2));
    }
 
    @Test
