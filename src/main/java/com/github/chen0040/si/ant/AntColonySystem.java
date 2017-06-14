@@ -13,30 +13,30 @@ public class AntColonySystem extends AntSystem {
    @Override
    public void depositPheromone()
    {
-      List<TupleTwo<Integer,Integer>> path = mGlobalBestAnt.path();
+      List<TupleTwo<Integer,Integer>> path = globalBestAnt.path();
       int segment_count = path.size();
       for (int i = 0; i < segment_count; ++i)
       {
          TupleTwo<Integer,Integer> state_transition = path.get(i);
          int state1_id = state_transition._1();
          int state2_id = state_transition._2();
-         double pheromone = mPheromones.get(state1_id, state2_id);
-         double p_delta = getRewardPerStateTransition(mGlobalBestAnt);
-         pheromone += m_alpha * p_delta;
+         double pheromone = pheromones.get(state1_id, state2_id);
+         double p_delta = getRewardPerStateTransition(globalBestAnt);
+         pheromone += alpha * p_delta;
 
-         mPheromones.set(state1_id, state2_id, pheromone);
-         if (mSymmetric)
+         pheromones.set(state1_id, state2_id, pheromone);
+         if (symmetric)
          {
-            mPheromones.set(state2_id, state1_id, pheromone);
+            pheromones.set(state2_id, state1_id, pheromone);
          }
       }
    }
 
    @Override
-   public void transitStates(Ant ant, int state_index)
+   public void transitStates(Ant ant)
    {
       int current_state_id = ant.currentState();
-      List<Integer> candidate_states = getCandidateNextStates(ant, current_state_id);
+      List<Integer> candidate_states = getCandidateNextStates(ant);
 
       if (candidate_states.isEmpty()) return;
 
@@ -50,10 +50,10 @@ public class AntColonySystem extends AntSystem {
       for (int i = 0; i < candidate_states.size(); ++i)
       {
          int candidate_state_id = candidate_states.get(i);
-         double pheromone = mPheromones.get(current_state_id, candidate_state_id);
-         double heuristic_cost = heuristicCost(current_state_id, candidate_state_id);
+         double pheromone = pheromones.get(current_state_id, candidate_state_id);
+         double heuristic_cost = heuristicValue(current_state_id, candidate_state_id);
 
-         double product = Math.pow(pheromone, m_alpha) * Math.pow(heuristic_cost, m_beta);
+         double product = Math.pow(pheromone, alpha) * Math.pow(heuristic_cost, beta);
 
          product_sum += product;
          acc_prob[i] = product_sum;
@@ -66,7 +66,7 @@ public class AntColonySystem extends AntSystem {
       }
 
       double r = mediator.nextDouble();
-      if (r <= m_Q)
+      if (r <= Q)
       {
          selected_state_id = state_id_with_max_prob;
       }
@@ -93,18 +93,18 @@ public class AntColonySystem extends AntSystem {
 
    protected void localPheromoneUpdate(int state1_id, int state2_id)
    {
-      double pheromone = mPheromones.get(state1_id, state2_id);
+      double pheromone = pheromones.get(state1_id, state2_id);
 
-      pheromone = (1 - m_rho) * pheromone + m_rho * mTau0;
-      if (pheromone <= mTau0)
+      pheromone = (1 - rho) * pheromone + rho * tau0;
+      if (pheromone <= tau0)
       {
-         pheromone = mTau0;
+         pheromone = tau0;
       }
 
-      mPheromones.set(state1_id, state2_id, pheromone);
-      if (mSymmetric)
+      pheromones.set(state1_id, state2_id, pheromone);
+      if (symmetric)
       {
-         mPheromones.set(state2_id, state1_id, pheromone);
+         pheromones.set(state2_id, state1_id, pheromone);
       }
    }
 }

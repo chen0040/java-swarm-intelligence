@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -17,28 +19,29 @@ import java.util.List;
 @Getter
 @Setter
 public class Ant {
-   protected final List<Integer> visitedStates = new ArrayList<>();
+   protected final List<Integer> path = new ArrayList<>();
+   protected final Set<Integer> visited = new HashSet<>();
    private boolean costValid = false;
    private double cost;
 
    public int currentState()
    {
-      if(visitedStates.isEmpty()) {
+      if(path.isEmpty()) {
          return -1;
       } else {
-         return visitedStates.get(visitedStates.size()-1);
+         return path.get(path.size()-1);
       }
    }
 
    public List<TupleTwo<Integer, Integer>> path()
    {
-      if(visitedStates.isEmpty()) return new ArrayList<>();
+      if(path.isEmpty()) return new ArrayList<>();
 
       List<TupleTwo<Integer, Integer>> path = new ArrayList<>();
-      for(int i = 0; i < this.visitedStates.size()-1; ++i)
+      for(int i = 0; i < this.path.size()-1; ++i)
       {
-         int state1_id = this.visitedStates.get(i);
-         int state2_id = this.visitedStates.get(i + 1);
+         int state1_id = this.path.get(i);
+         int state2_id = this.path.get(i + 1);
          path.add(new TupleTwo<>(state1_id, state2_id));
       }
 
@@ -51,30 +54,31 @@ public class Ant {
 
    public void visit(int state)
    {
-      visitedStates.add(state);
+      path.add(state);
+      visited.add(state);
       costValid = false;
    }
 
    public void reset()
    {
-      visitedStates.clear();
+      path.clear();
+      visited.clear();
       costValid = false;
    }
 
-   public int pathLength()
-   {
-      return visitedStates.size();
-   }
 
    public boolean hasVisited(int state_id)
    {
-      return visitedStates.contains(state_id);
+      return visited.contains(state_id);
    }
 
    public void copy(Ant rhs)
    {
-      visitedStates.clear();
-      visitedStates.addAll(rhs.visitedStates);
+      path.clear();
+      path.addAll(rhs.path);
+      visited.clear();
+      visited.addAll(rhs.visited);
+
       costValid = rhs.costValid;
       cost = rhs.cost;
    }
@@ -88,7 +92,17 @@ public class Ant {
 
 
    public void evaluate(PathMediator mediator) {
-      cost = mediator.evaluate(visitedStates);
+      cost = mediator.evaluate(path);
       costValid = true;
+   }
+
+
+   public void update(List<Integer> path, double pathCost) {
+      this.path.clear();
+      this.path.addAll(path);
+      this.visited.clear();
+      this.visited.addAll(path);
+      this.cost = pathCost;
+      this.costValid = true;
    }
 }

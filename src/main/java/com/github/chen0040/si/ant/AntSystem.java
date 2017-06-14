@@ -1,7 +1,10 @@
 package com.github.chen0040.si.ant;
 
 
+import com.github.chen0040.data.utils.CollectionUtils;
 import com.github.chen0040.data.utils.TupleTwo;
+import com.github.chen0040.si.utils.KnuthShuffle;
+import com.github.chen0040.si.utils.PathCostFunction;
 import com.github.chen0040.si.utils.PathMediator;
 import com.github.chen0040.si.utils.SparseMatrix;
 import lombok.Getter;
@@ -17,28 +20,36 @@ import java.util.List;
 @Getter
 @Setter
 public class AntSystem {
-   protected final List<Ant> mAnts = new ArrayList<>();
-   protected Ant mGlobalBestAnt;
+   protected final List<Ant> ants = new ArrayList<>();
+   protected Ant globalBestAnt;
 
-   protected double m_alpha=1;
-   protected double m_beta=2;
-   protected double m_Q=0.9;
-   protected double m_rho=0.1;
-   protected boolean mSymmetric = true;
-   protected final SparseMatrix mPheromones = new SparseMatrix();
-   protected int mStateCount;
-   protected int populationSize;
+   protected double alpha =1;
+   protected double beta =2;
+   protected double Q =0.9;
+   protected double rho =0.1;
+   protected boolean symmetric = true;
+   protected final SparseMatrix pheromones = new SparseMatrix();
+   protected int stateCount;
+   protected int populationSize = 100;
 
-   protected double mTau0;
+   protected double tau0;
 
    protected PathMediator mediator = new PathMediator();
 
    private double tolerance = -1; //0.000001;
    private int maxIterations = 100;
 
+   protected int iteration = 0;
+
+   private int localSearchIntensity = 50;
+
+   private final List<Double> costTrend = new ArrayList<>();
+
+   private boolean localSearchEnabled =  false;
+
    protected double getRewardPerStateTransition(Ant ant)
    {
-      return mediator.getReward(ant.getVisitedStates(), ant.getCost());
+      return mediator.getReward(ant.getPath(), ant.getCost());
    }
 
    public Ant GenerateAnt()
@@ -48,19 +59,20 @@ public class AntSystem {
 
    public void initialize()
    {
-      mGlobalBestAnt = GenerateAnt();
+      costTrend.clear();
+      globalBestAnt = GenerateAnt();
 
       for (int i = 0; i < populationSize; ++i)
       {
-         mAnts.add(GenerateAnt());
+         ants.add(GenerateAnt());
       }
-      mTau0 = 1.0 / mStateCount;
+      tau0 = 1.0 / stateCount;
 
-      for (int i = 0; i < mStateCount; ++i)
+      for (int i = 0; i < stateCount; ++i)
       {
-         for (int j = 0; j < mStateCount; ++j)
+         for (int j = 0; j < stateCount; ++j)
          {
-            mPheromones.set(i, j, mTau0);
+            pheromones.set(i, j, tau0);
          }
       }
    }
@@ -69,27 +81,27 @@ public class AntSystem {
    {
       for (int i = 0; i < populationSize; ++i)
       {
-         mAnts.get(i).evaluate(mediator);
+         ants.get(i).evaluate(mediator);
       }
    }
 
    public Ant solve()
    {
       initialize();
-      int iteration = 0;
+      this.iteration = 0;
       double cost_reduction = tolerance;
       double global_best_solution_cost = Double.MAX_VALUE;
       double prev_global_best_solution_cost;
       while ((tolerance < 0 || cost_reduction >= tolerance) && iteration < maxIterations)
       {
          prev_global_best_solution_cost = global_best_solution_cost;
-         Iterate();
-         global_best_solution_cost = mGlobalBestAnt.getCost();
+         iterate();
+         global_best_solution_cost = globalBestAnt.getCost();
          cost_reduction = prev_global_best_solution_cost - global_best_solution_cost;
          iteration++;
       }
 
-      return mGlobalBestAnt;
+      return globalBestAnt;
    }
 
    public void updateGlobalBestAnt()
@@ -97,41 +109,85 @@ public class AntSystem {
       Ant best_particle = null;
       for (int i = 0; i < populationSize; ++i)
       {
-         if (mAnts.get(i).isBetterThan(mGlobalBestAnt))
+         if (ants.get(i).isBetterThan(globalBestAnt))
          {
-            best_particle = mAnts.get(i);
+            best_particle = ants.get(i);
          }
       }
       if (best_particle != null)
       {
-         mGlobalBestAnt.copy(best_particle);
+         globalBestAnt.copy(best_particle);
       }
    }
 
-   public void Iterate()
+   public void iterate()
    {
       antTraverse();
       updateAntCost();
+      antExploit();
       evaporatePheromone();
       updateGlobalBestAnt();
       depositPheromone();
+      costTrend.add(globalBestAnt.getCost());
+   }
+
+   // local search
+   public void antExploit(){
+      if(!localSearchEnabled) return;
+      for(int i=0; i < populationSize; ++i){
+         List<Integer> path = ants.get(i).getPath();
+         double pathCost0 = ants.get(i).getCost();
+         double pathCost = pathCost0;
+         if(path.size() < 3) continue;
+         for(int j=0; j < path.size(); ++j){
+            int K = -1;
+            double maxGain = 0;
+            for(int k = j+1; k < path.size(); ++k){
+               double gain = mediator.getCostFunction().gain4Exchange(path, pathCost, j, k);
+               if(gain > maxGain) {
+                  maxGain = gain;
+                  K = k;
+               }
+            }
+
+            if(K != -1) {
+               CollectionUtils.exchange(path, j, K);
+            }
+         }
+
+         if(pathCost < pathCost0) {
+            ants.get(i).update(path, pathCost);
+         }
+      }
+
+
    }
 
    public void antTraverse()
    {
       int ant_count = populationSize;
 
+      List<Integer> positions = new ArrayList<>();
+
+      for(int i=0; i < stateCount; ++i) {
+         positions.add(i);
+      }
+      KnuthShuffle.shuffle(positions, mediator.getRandomGenerator());
+
       for (int i = 0; i < ant_count; ++i)
       {
-         mAnts.get(i).reset();
+         ants.get(i).reset();
+         ants.get(i).visit(positions.get(i % stateCount));
       }
 
-      for (int state_index = 0; state_index < mStateCount; ++state_index)
+
+
+      for (int state_index = 1; state_index < stateCount; ++state_index)
       {
          for (int i = 0; i < ant_count; ++i)
          {
-            Ant ant = mAnts.get(i);
-            transitStates(ant, state_index);
+            Ant ant = ants.get(i);
+            transitStates(ant);
          }
       }
    }
@@ -140,7 +196,7 @@ public class AntSystem {
    {
       for (int ant_index = 0; ant_index < populationSize; ++ant_index)
       {
-         Ant ant = mAnts.get(ant_index);
+         Ant ant = ants.get(ant_index);
 
          List<TupleTwo<Integer, Integer>> path = ant.path();
          int segment_count = path.size();
@@ -149,14 +205,14 @@ public class AntSystem {
             TupleTwo<Integer, Integer> state_transition = path.get(i);
             int state1_id = state_transition._1();
             int state2_id = state_transition._2();
-            double pheromone = mPheromones.get(state1_id, state2_id);
+            double pheromone = pheromones.get(state1_id, state2_id);
             double p_delta = getRewardPerStateTransition(ant);
-            pheromone += m_alpha * p_delta;
+            pheromone += alpha * p_delta;
 
-            mPheromones.set(state1_id, state2_id, pheromone);
-            if (mSymmetric)
+            pheromones.set(state1_id, state2_id, pheromone);
+            if (symmetric)
             {
-               mPheromones.set(state2_id, state1_id, pheromone);
+               pheromones.set(state2_id, state1_id, pheromone);
             }
          }
       }
@@ -165,28 +221,28 @@ public class AntSystem {
    public void evaporatePheromone()
    {
       double pheromone = 0;
-      for (int i = 0; i < mStateCount; ++i)
+      for (int i = 0; i < stateCount; ++i)
       {
-         for (int j = 0; j < mStateCount; ++j)
+         for (int j = 0; j < stateCount; ++j)
          {
-            pheromone = mPheromones.get(i, j);
-            pheromone = (1 - m_alpha) * pheromone;
-            if (pheromone < mTau0)
+            pheromone = pheromones.get(i, j);
+            pheromone = (1 - alpha) * pheromone;
+            if (pheromone < tau0)
             {
-               pheromone = mTau0;
+               pheromone = tau0;
             }
-            mPheromones.set(i, j, pheromone);
+            pheromones.set(i, j, pheromone);
          }
       }
    }
 
-   public List<Integer> getCandidateNextStates(Ant ant, int state_id)
+   public List<Integer> getCandidateNextStates(Ant ant)
    {
-      List<Integer> set = mediator.getCandidateNextStates(ant.visitedStates, state_id);
+      List<Integer> set = mediator.getCandidateNextStates(ant.path);
       if(set.isEmpty()) {
          List<Integer> candidate_states = new ArrayList<>();
-         for (int i = 0; i < mStateCount; ++i) {
-            if (!ant.hasVisited(state_id)) {
+         for (int i = 0; i < stateCount; ++i) {
+            if (!ant.hasVisited(i)) {
                candidate_states.add(i);
             }
          }
@@ -196,15 +252,16 @@ public class AntSystem {
       }
    }
 
-   public double heuristicCost(int state1_id, int state2_id)
+   public double heuristicValue(int state1_id, int state2_id)
    {
-      return mediator.heuristicCost(state1_id, state2_id);
+      return mediator.heuristicValue(state1_id, state2_id);
    }
 
-   public void transitStates(Ant ant, int state_index)
+   public void transitStates(Ant ant)
    {
       int current_state_id = ant.currentState();
-      List<Integer> candidate_states = getCandidateNextStates(ant, current_state_id);
+
+      List<Integer> candidate_states = getCandidateNextStates(ant);
 
       if (candidate_states.isEmpty()) return;
 
@@ -215,10 +272,10 @@ public class AntSystem {
       for (int i = 0; i < candidate_states.size(); ++i)
       {
          int candidate_state_id = candidate_states.get(i);
-         double pheromone = mPheromones.get(current_state_id, candidate_state_id);
-         double heuristic_cost = heuristicCost(current_state_id, candidate_state_id);
+         double pheromone = pheromones.get(current_state_id, candidate_state_id);
+         double heuristic_value = heuristicValue(current_state_id, candidate_state_id);
 
-         double product = Math.pow(pheromone, m_alpha) * Math.pow(heuristic_cost, m_beta);
+         double product = Math.pow(pheromone, alpha) * Math.pow(heuristic_value, beta);
 
          product_sum += product;
          acc_prob[i] = product_sum;
@@ -239,5 +296,14 @@ public class AntSystem {
       {
          ant.visit(selected_state_id);
       }
+   }
+
+
+   public void setProblemSize(int size) {
+      stateCount = size;
+   }
+
+   public void setCostFunction(PathCostFunction costFunction) {
+      mediator.setCostFunction(costFunction);
    }
 }
