@@ -139,6 +139,51 @@ for(int i=0; i < bestAnt.getPath().size(); ++i) {
   int j = (i + 1) % bestAnt.getPath().size();
   System.out.println(bestAnt.getPath().get(i) + " => " + bestAnt.getPath().get(j));
 }
- ```
+```
+ 
+ ### Ant Colony System
+ 
+ The sample code below shows how to solve a TSP (Travelling Salesman Problem) instance using Ant Colony System:
+  
+```java
+TspBenchmark benchmark = Tsp.get(Tsp.Instance.bayg29);
+ 
+PathCostFunction costFunction = new PathCostFunction() {
+  @Override public double evaluate(List<Integer> path) {
+     double cost = 0;
+     for(int i=0; i < path.size(); ++i) {
+        int j = (i+1) % path.size();
+        double distance = benchmark.distance(path.get(i), path.get(j));
+        cost += distance;
+     }
+     return cost;
+  }
+
+  // heuristic weight for transition from state1 to state2 during path construction
+  // the higher the weight the more favorable to transit from state1 to state2
+  @Override public double stateTransitionWeight(int state1, int state2) {
+     return 1 / (1 + benchmark.distance(state1, state2));
+  }
+};
+
+
+
+AntColonySystem antColonySystem = new AntColonySystem();
+antColonySystem.setProblemSize(benchmark.size());
+antColonySystem.setCostFunction(costFunction);
+
+antColonySystem.setMaxIterations(100);
+
+Ant bestAnt = antColonySystem.solve();
+
+System.out.println("minimal total distance found: " + bestAnt.getCost());
+System.out.println("best known cost: " + costFunction.evaluate(benchmark.optTour()));
+
+System.out.println("best path found: ");
+for(int i=0; i < bestAnt.getPath().size(); ++i) {
+  int j = (i + 1) % bestAnt.getPath().size();
+  System.out.println(bestAnt.getPath().get(i) + " => " + bestAnt.getPath().get(j));
+}
+```
 
 

@@ -52,7 +52,7 @@ public class AntSystem {
       return mediator.getReward(ant.getPath(), ant.getCost());
    }
 
-   public Ant GenerateAnt()
+   public Ant generateAnt()
    {
       return new Ant();
    }
@@ -60,11 +60,11 @@ public class AntSystem {
    public void initialize()
    {
       costTrend.clear();
-      globalBestAnt = GenerateAnt();
+      globalBestAnt = generateAnt();
 
       for (int i = 0; i < populationSize; ++i)
       {
-         ants.add(GenerateAnt());
+         ants.add(generateAnt());
       }
       tau0 = 1.0 / stateCount;
 

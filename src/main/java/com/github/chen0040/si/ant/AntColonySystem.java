@@ -91,7 +91,7 @@ public class AntColonySystem extends AntSystem {
       }
    }
 
-   protected void localPheromoneUpdate(int state1_id, int state2_id)
+   private void localPheromoneUpdate(int state1_id, int state2_id)
    {
       double pheromone = pheromones.get(state1_id, state2_id);
 
