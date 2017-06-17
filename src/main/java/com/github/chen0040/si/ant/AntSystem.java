@@ -251,11 +251,6 @@ public class AntSystem extends PathMediator {
       }
    }
 
-   public double heuristicValue(int state1_id, int state2_id)
-   {
-      return this.heuristicValue(state1_id, state2_id);
-   }
-
    public void transitStates(Ant ant)
    {
       int current_state_id = ant.currentState();
