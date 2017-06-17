@@ -65,14 +65,14 @@ public class AntColonySystem extends AntSystem {
          }
       }
 
-      double r = mediator.nextDouble();
+      double r = this.nextDouble();
       if (r <= Q)
       {
          selected_state_id = state_id_with_max_prob;
       }
       else
       {
-         r = mediator.nextDouble();
+         r = this.nextDouble();
          for (int i = 0; i < candidate_states.size(); ++i)
          {
             acc_prob[i] /= product_sum;

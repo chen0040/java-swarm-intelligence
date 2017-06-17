@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class AntSystem {
+public class AntSystem extends PathMediator {
    protected final List<Ant> ants = new ArrayList<>();
    protected Ant globalBestAnt;
 
@@ -34,7 +34,6 @@ public class AntSystem {
 
    protected double tau0;
 
-   protected PathMediator mediator = new PathMediator();
 
    private double tolerance = -1; //0.000001;
    private int maxIterations = 100;
@@ -49,7 +48,7 @@ public class AntSystem {
 
    protected double getRewardPerStateTransition(Ant ant)
    {
-      return mediator.getReward(ant.getPath(), ant.getCost());
+      return this.getReward(ant.getPath(), ant.getCost());
    }
 
    public Ant generateAnt()
@@ -81,7 +80,7 @@ public class AntSystem {
    {
       for (int i = 0; i < populationSize; ++i)
       {
-         ants.get(i).evaluate(mediator);
+         ants.get(i).evaluate(this);
       }
    }
 
@@ -143,7 +142,7 @@ public class AntSystem {
             int K = -1;
             double maxGain = 0;
             for(int k = j+1; k < path.size(); ++k){
-               double gain = mediator.getCostFunction().gain4Exchange(path, pathCost, j, k);
+               double gain = this.getCostFunction().gain4Exchange(path, pathCost, j, k);
                if(gain > maxGain) {
                   maxGain = gain;
                   K = k;
@@ -172,7 +171,7 @@ public class AntSystem {
       for(int i=0; i < stateCount; ++i) {
          positions.add(i);
       }
-      KnuthShuffle.shuffle(positions, mediator.getRandomGenerator());
+      KnuthShuffle.shuffle(positions, this.getRandomGenerator());
 
       for (int i = 0; i < ant_count; ++i)
       {
@@ -238,7 +237,7 @@ public class AntSystem {
 
    public List<Integer> getCandidateNextStates(Ant ant)
    {
-      List<Integer> set = mediator.getCandidateNextStates(ant.path);
+      List<Integer> set = this.getCandidateNextStates(ant.path);
       if(set.isEmpty()) {
          List<Integer> candidate_states = new ArrayList<>();
          for (int i = 0; i < stateCount; ++i) {
@@ -254,7 +253,7 @@ public class AntSystem {
 
    public double heuristicValue(int state1_id, int state2_id)
    {
-      return mediator.heuristicValue(state1_id, state2_id);
+      return this.heuristicValue(state1_id, state2_id);
    }
 
    public void transitStates(Ant ant)
@@ -281,7 +280,7 @@ public class AntSystem {
          acc_prob[i] = product_sum;
       }
 
-      double r = mediator.nextDouble();
+      double r = this.nextDouble();
       for (int i = 0; i < candidate_states.size(); ++i)
       {
          acc_prob[i] /= product_sum;
@@ -303,7 +302,4 @@ public class AntSystem {
       stateCount = size;
    }
 
-   public void setCostFunction(PathCostFunction costFunction) {
-      mediator.setCostFunction(costFunction);
-   }
 }

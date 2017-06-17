@@ -13,7 +13,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class BeeSwarm implements Serializable {
+public class BeeSwarm extends Mediator implements Serializable {
    private static final long serialVersionUID = -771177914366258940L;
 
    protected int scoutBeeCount = 60; //number of scout bees (e.g. 40-1000)
@@ -28,7 +28,6 @@ public class BeeSwarm implements Serializable {
    private double tolerance = -1; //0.000001;
    private int maxIterations = 100;
 
-   private Mediator mediator = new Mediator();
 
    private List<Double> costTrend = new ArrayList<>();
 
@@ -39,7 +38,7 @@ public class BeeSwarm implements Serializable {
 
      for(int i=0; i < scoutBeeCount; ++i){
          Bee bee = new Bee();
-         bee.randomSearch(mediator);
+         bee.randomSearch(this);
          patches.add(bee);
      }
 
@@ -75,7 +74,7 @@ public class BeeSwarm implements Serializable {
          //the following for loop is equivalent to a local search around each solution in the elite solutions
          for (int i = 0; i < beeCountOnElitePatches; ++i)
          {
-             Bee bee = patches.get(j).dance(mediator);
+             Bee bee = patches.get(j).dance(this);
              if (bee.isBetterThan(patches.get(j)))
              {
                  patches.set(j, bee.makeCopy());
@@ -89,7 +88,7 @@ public class BeeSwarm implements Serializable {
          //the following for loop is equivalent to a local search around each solution next best to the elite solutions
          for (int i = 0; i < beeCountOnBestPatches; ++i)
          {
-               Bee bee = patches.get(j).dance(mediator);
+               Bee bee = patches.get(j).dance(this);
              if (bee.isBetterThan(patches.get(j)))
              {
                  patches.set(j, bee);
@@ -100,7 +99,7 @@ public class BeeSwarm implements Serializable {
      //assign remaining bees to search randomly
      for (int j = bestPatchCount; j < scoutBeeCount; ++j)
      {
-         globalBestSolution.randomSearch(mediator);
+         globalBestSolution.randomSearch(this);
          patches.set(j, globalBestSolution.makeCopy());
      }
 

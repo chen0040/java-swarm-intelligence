@@ -25,14 +25,12 @@ public class BeeSwarmUnitTest {
    @Test
    public void test_Rosenbrock() {
       CostFunctions.Rosenbrock Rosenbrock = new CostFunctions.Rosenbrock();
-      Mediator mediator = new Mediator();
-      mediator.setUpperBounds(Rosenbrock.upperBounds());
-      mediator.setLowerBounds(Rosenbrock.lowerBounds());
-      mediator.setDimension(Rosenbrock.dimension());
-      mediator.setCostFunction(Rosenbrock);
 
       BeeSwarm swarm = new BeeSwarm();
-      swarm.setMediator(mediator);
+      swarm.setUpperBounds(Rosenbrock.upperBounds());
+      swarm.setLowerBounds(Rosenbrock.lowerBounds());
+      swarm.setDimension(Rosenbrock.dimension());
+      swarm.setCostFunction(Rosenbrock);
       swarm.setMaxIterations(50);
 
       Bee bestSolution = swarm.solve();
@@ -59,14 +57,11 @@ public class BeeSwarmUnitTest {
          }
       };
 
-      Mediator mediator = new Mediator();
-      mediator.setUpperBounds(Arrays.asList(5.0, 5.0));
-      mediator.setLowerBounds(Arrays.asList(-5.0, -5.0));
-      mediator.setDimension(2);
-      mediator.setCostFunction(Rosenbrock);
-
       BeeSwarm swarm = new BeeSwarm();
-      swarm.setMediator(mediator);
+      swarm.setUpperBounds(Arrays.asList(5.0, 5.0));
+      swarm.setLowerBounds(Arrays.asList(-5.0, -5.0));
+      swarm.setDimension(2);
+      swarm.setCostFunction(Rosenbrock);
       swarm.setMaxIterations(50);
 
       Bee bestSolution = swarm.solve();
@@ -83,14 +78,11 @@ public class BeeSwarmUnitTest {
    public void test_Rastrigin() {
       CostFunctions.Rastrigin Rastrigin = new CostFunctions.Rastrigin();
 
-      Mediator mediator = new Mediator();
-      mediator.setUpperBounds(Rastrigin.upperBounds());
-      mediator.setLowerBounds(Rastrigin.lowerBounds());
-      mediator.setDimension(Rastrigin.dimension());
-      mediator.setCostFunction(Rastrigin);
-
       BeeSwarm swarm = new BeeSwarm();
-      swarm.setMediator(mediator);
+      swarm.setUpperBounds(Rastrigin.upperBounds());
+      swarm.setLowerBounds(Rastrigin.lowerBounds());
+      swarm.setDimension(Rastrigin.dimension());
+      swarm.setCostFunction(Rastrigin);
       swarm.setMaxIterations(50);
 
       Bee bestSolution = swarm.solve();
@@ -106,14 +98,11 @@ public class BeeSwarmUnitTest {
    public void test_Griewangk() {
       CostFunctions.Griewangk Griewangk = new CostFunctions.Griewangk();
 
-      Mediator mediator = new Mediator();
-      mediator.setUpperBounds(Griewangk.upperBounds());
-      mediator.setLowerBounds(Griewangk.lowerBounds());
-      mediator.setDimension(Griewangk.dimension());
-      mediator.setCostFunction(Griewangk);
-
       BeeSwarm swarm = new BeeSwarm();
-      swarm.setMediator(mediator);
+      swarm.setUpperBounds(Griewangk.upperBounds());
+      swarm.setLowerBounds(Griewangk.lowerBounds());
+      swarm.setDimension(Griewangk.dimension());
+      swarm.setCostFunction(Griewangk);
       swarm.setMaxIterations(100);
 
       Bee bestSolution = swarm.solve();

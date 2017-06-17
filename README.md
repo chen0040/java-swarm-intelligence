@@ -41,14 +41,11 @@ CostFunction Rosenbrock = new CostFunction() {
     return calc(solution.get(0), solution.get(1));
  }
 };
-Mediator mediator = new Mediator();
-mediator.setUpperBounds(Arrays.asList(5.0, 5.0));
-mediator.setLowerBounds(Arrays.asList(-5.0, -5.0));
-mediator.setDimension(2);
-mediator.setCostFunction(Rosenbrock);
-
 BeeSwarm swarm = new BeeSwarm();
-swarm.setMediator(mediator);
+swarm.setUpperBounds(Arrays.asList(5.0, 5.0));
+swarm.setLowerBounds(Arrays.asList(-5.0, -5.0));
+swarm.setDimension(2);
+swarm.setCostFunction(Rosenbrock);
 swarm.setMaxIterations(50);
 
 Bee bestSolution = swarm.solve();
@@ -75,14 +72,11 @@ CostFunction Rosenbrock = new CostFunction() {
  }
 };
 
-Mediator mediator = new Mediator();
-mediator.setUpperBounds(Arrays.asList(5.0, 5.0));
-mediator.setLowerBounds(Arrays.asList(-5.0, -5.0));
-mediator.setDimension(2);
-mediator.setCostFunction(Rosenbrock);
-
 ParticleSwarm swarm = new ParticleSwarm();
-swarm.setMediator(mediator);
+swarm.setUpperBounds(Arrays.asList(5.0, 5.0));
+swarm.setLowerBounds(Arrays.asList(-5.0, -5.0));
+swarm.setDimension(2);
+swarm.setCostFunction(Rosenbrock);
 swarm.setMaxIterations(50);
 
 Particle bestSolution = swarm.solve();

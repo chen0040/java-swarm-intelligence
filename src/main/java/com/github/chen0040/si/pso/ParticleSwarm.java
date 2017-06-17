@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class ParticleSwarm {
+public class ParticleSwarm extends Mediator {
    protected final List<Particle> particles = new ArrayList<>();
    protected final List<Particle> localBestParticles = new ArrayList<>();
    protected Particle globalBestSolution = null;
@@ -29,11 +29,10 @@ public class ParticleSwarm {
 
    private List<Double> costTrend = new ArrayList<>();
 
-   private Mediator mediator = new Mediator();
 
    protected Particle create(){
       Particle p = new Particle();
-      p.initialize(mediator);
+      p.initialize(this);
       return p;
    }
 
@@ -44,7 +43,7 @@ public class ParticleSwarm {
       costTrend.clear();
 
       globalBestSolution = create();
-      globalBestSolution.evaluate(mediator);
+      globalBestSolution.evaluate(this);
       for (int i = 0; i < populationSize; ++i)
       {
          Particle p = create();
@@ -61,7 +60,7 @@ public class ParticleSwarm {
    {
       for (int i = 0; i < particles.size(); ++i)
       {
-         particles.get(i).evaluate(mediator);
+         particles.get(i).evaluate(this);
       }
    }
 
@@ -100,7 +99,7 @@ public class ParticleSwarm {
 
    public void updateParticleVelocity()
    {
-      int dimension = mediator.getDimension();
+      int dimension = this.getDimension();
       for (int i = 0; i < particles.size(); ++i)
       {
          for (int j = 0; j < dimension; ++j)
@@ -110,9 +109,9 @@ public class ParticleSwarm {
             double X_lbest = localBestParticles.get(i).getPosition(j);
             double X_gbest = globalBestSolution.getPosition(j);
 
-            double r1 = mediator.nextDouble();
-            double r2 = mediator.nextDouble();
-            double r3 = mediator.nextDouble();
+            double r1 = this.nextDouble();
+            double r2 = this.nextDouble();
+            double r3 = this.nextDouble();
 
             double w = 0.5 + r3 / 2;
             double newV = w * oldV + C1 * r1 * (X_lbest - Xj) + C2 * r2 * (X_gbest - Xj);
@@ -124,7 +123,7 @@ public class ParticleSwarm {
 
    public void updateParticlePosition()
    {
-      int dimension = mediator.getDimension();
+      int dimension = this.getDimension();
       for (int i = 0; i < particles.size(); ++i)
       {
          for (int j = 0; j < dimension; ++j)
