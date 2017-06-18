@@ -6,7 +6,7 @@
 
     <groupId>com.github.chen0040</groupId>
     <artifactId>java-swarm-intelligence</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
 
 
 
@@ -519,6 +519,12 @@
         <dependency>
             <groupId>com.github.chen0040</groupId>
             <artifactId>java-datasets-discrete-optimization</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.chen0040</groupId>
+            <artifactId>java-data-visualizer</artifactId>
             <version>1.0.1</version>
         </dependency>
 

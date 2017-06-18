@@ -19,7 +19,7 @@ Add the following dependency to your POM file:
 <dependency>
   <groupId>com.github.chen0040</groupId>
   <artifactId>java-swarm-intelligence</artifactId>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
 </dependency>
 ```
 
@@ -55,6 +55,13 @@ List<Double> trend = swarm.getCostTrend();
 logger.info("trend: {}", trend);
 ```
 
+To visualize the performance of the bees swarm algorithm over time:
+
+```java
+CostTrend chart = new CostTrend(trend, "Cost vs Generation");
+chart.showIt(true);
+```
+
 ### Particle Swarm Optimization
 
 The sample code below shows how to use the PSO algorithm to solve the Rosenbrock minimization problem:
@@ -84,8 +91,13 @@ logger.info("best solution: {} cost: {}", bestSolution, bestSolution.getCost());
 
 List<Double> trend = swarm.getCostTrend();
 logger.info("trend: {}", trend);
+```
 
-assertThat(bestSolution.getCost()).isCloseTo(0, within(0.01));
+To visualize the performance of the particle swarm algorithm over time:
+
+```java
+CostTrend chart = new CostTrend(trend, "Cost vs Generation");
+chart.showIt(true);
 ```
 
 ### Ant System
@@ -134,6 +146,13 @@ for(int i=0; i < bestAnt.getPath().size(); ++i) {
   System.out.println(bestAnt.getPath().get(i) + " => " + bestAnt.getPath().get(j));
 }
 ```
+
+To visualize the performance of the ant system algorithm over time:
+
+```java
+CostTrend chart = new CostTrend(antSystem.getCostTrend(), "Cost vs Generation");
+chart.showIt(true);
+```
  
  ### Ant Colony System
  
@@ -178,6 +197,13 @@ for(int i=0; i < bestAnt.getPath().size(); ++i) {
   int j = (i + 1) % bestAnt.getPath().size();
   System.out.println(bestAnt.getPath().get(i) + " => " + bestAnt.getPath().get(j));
 }
+```
+
+To visualize the performance of the ant colony system algorithm over time:
+
+```java
+CostTrend chart = new CostTrend(antColonySystem.getCostTrend(), "Cost vs Generation");
+chart.showIt(true);
 ```
 
 
